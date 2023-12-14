@@ -1,0 +1,67 @@
+theory Example11
+  imports Main
+
+begin
+
+text \<open> 
+  Define arithmetic expressions in one variable over integers
+  (type int) as a data type:
+    ...
+  
+  Define a function eval :: exp => int =>  int such that eval e x evaluates e at
+  the value x.
+\<close>
+
+datatype exp = Var | Const int | Add exp exp | Mult exp exp
+
+fun eval :: "exp \<Rightarrow> int \<Rightarrow> int" where
+"eval Var x = x" |
+"eval (Const i) x = i" |
+"eval (Add i j) x = (eval i x) + (eval j x)" |
+"eval (Mult i j) x = (eval i x) * (eval j x)"
+
+fun evalp :: "int list \<Rightarrow> int \<Rightarrow> int" where 
+"evalp [] y = 0" |
+"evalp (x # xs) y = x + y * (evalp xs y)"
+
+fun ladd :: "int list \<Rightarrow> int list \<Rightarrow> int list" where 
+"ladd [] []  = []" |
+"ladd [] xs = xs" |
+"ladd xs [] = xs" |
+"ladd (x # xs) (y # ys) = (x + y) # (ladd xs ys)"
+
+lemma l1 [simp]: "evalp (ladd xs ys) x = (evalp xs x) + (evalp ys x)"
+ apply(induction xs rule: ladd.induct)
+     apply(auto simp add: algebra_simps)
+  done
+
+fun lm :: "int \<Rightarrow> int list \<Rightarrow> int list" where
+"lm x [] = []" |
+"lm x (y # ys) = (x * y) # (lm x ys)"
+
+lemma l2 [simp]: "evalp (lm x xs) z = x * (evalp xs z)"
+ apply(induction xs arbitrary: z)
+     apply(auto simp add: algebra_simps)
+ done
+
+fun lmult :: "int list \<Rightarrow> int list \<Rightarrow> int list" where
+"lmult [] xs = []" |
+"lmult (x # xs) ys = ladd (lm x ys) (0 # (lmult xs ys))"
+
+lemma l3 [simp]: "evalp (lmult xs ys) z = (evalp xs z) * (evalp ys z)"
+ apply(induction xs)
+     apply(auto simp add: algebra_simps)
+ done
+
+fun coeffs :: "exp \<Rightarrow> int list" where 
+"coeffs Var = 0 # 1 # []" |
+"coeffs (Const i) = i # []" |
+"coeffs (Add x y) = ladd (coeffs x) (coeffs y)" |
+"coeffs (Mult x y) = lmult (coeffs x) (coeffs y)"
+
+theorem excersize [simp]: "evalp (coeffs e) x = eval e x"
+  apply(induction e arbitrary: x)
+  apply(auto simp add: algebra_simps)
+  done
+
+end

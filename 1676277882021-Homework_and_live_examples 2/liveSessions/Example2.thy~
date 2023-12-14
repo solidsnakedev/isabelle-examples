@@ -1,0 +1,36 @@
+theory Example2
+  imports Main
+
+begin
+
+text \<open>
+  Exercise:
+  Prove that add
+  is associative and commutative. Define a recursive function double :: nat )
+  nat and prove: double m = add m m.
+\<close>
+
+definition addS :: "nat \<Rightarrow> nat \<Rightarrow> nat" where
+"addS x y \<equiv> x + y"
+
+fun add :: "nat \<Rightarrow> nat \<Rightarrow> nat" where
+one: "add x 0 = x" |
+two: "add x (Suc y) = Suc (add x y)"
+
+lemma zero: "add 0 x = x"
+  apply(induction x)
+   apply(auto)
+  done
+
+lemma succ[simp]: "Suc (add x y) = add (Suc x) y"
+  apply(induction y)
+   apply(auto)
+  done
+
+lemma "add m n = add n m"
+  apply(induction n)
+  apply(simp add: zero)
+  apply(auto)
+done
+
+end

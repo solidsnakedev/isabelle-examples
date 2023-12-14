@@ -1,0 +1,8 @@
+Assignments:
+
+1. Example4 from the 2nd chapter of the Prog&Prove tutorial
+2. example11 from the 2nd chapter of the Prog&Prove tutorial
+3. Choose a validation script that you developed yearlier then develop a model for it with requirements formalized as theorems. Proofs are not necessary for the next week. 
+
+Hint: use "using [[simp_trace]]" to check what is happening with simplification engine
+
